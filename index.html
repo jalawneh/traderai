@@ -2,31 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=400, height=700, initial-scale=1.0"/>
-  <title>Chat Only</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat Window</title>
 
   <style>
     html, body {
       margin: 0;
       padding: 0;
-
-      width: 400px;
-      height: 700px;
-
+      width: 420px;
+      height: 760px;
       overflow: hidden;
-      background: transparent;
+      background: #ffffff;
+      font-family: Arial, sans-serif;
     }
 
-    /* Center widget inside this fixed-size page */
+    .chat-shell {
+      width: 420px;
+      height: 760px;
+      background: #ffffff;
+      position: relative;
+    }
+
+    .placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 16px;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
     iframe[src*="retell"],
     div[id*="retell"],
     div[class*="retell"] {
       position: fixed !important;
-      bottom: 0 !important;
       right: 0 !important;
-
-      width: 100% !important;
-      height: 100% !important;
+      bottom: 0 !important;
+      width: 420px !important;
+      height: 760px !important;
+      max-width: 420px !important;
+      max-height: 760px !important;
     }
   </style>
 
@@ -37,8 +56,12 @@
     data-public-key="public_key_0b74d32971e4364d15024"
     data-agent-id="agent_a22e71c2e4717d7c80a03616c5"
     data-auto-open="true"
+    data-title="AI Chat Assistant"
   ></script>
 </head>
 <body>
+  <div class="chat-shell">
+    <div class="placeholder">Loading chat...</div>
+  </div>
 </body>
 </html>
