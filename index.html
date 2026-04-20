@@ -2,109 +2,87 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Retell Chat Test</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background: #ffffff;
-      color: #111827;
-    }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Auto Chat</title>
 
-    .wrap {
-      min-height: 100vh;
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      padding: 24px;
-      box-sizing: border-box;
-    }
-
-    .card {
-      max-width: 520px;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 24px;
-      background: #fff;
-    }
-
-    h1 {
-      margin: 0 0 12px;
-      font-size: 24px;
-    }
-
-    p {
-      margin: 8px 0;
-      line-height: 1.5;
-      color: #4b5563;
-    }
-
-    .ok {
-      color: #065f46;
-      font-weight: 600;
-    }
-
-    .bad {
-      color: #b91c1c;
-      font-weight: 600;
+      min-height: 100vh;
+      background: #f5f7fb;
+      color: #333;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Retell Chat Test</h1>
-      <p id="status">Loading widget…</p>
-      <p>If the chat launcher or chat window does not appear, then the page is fine and the Retell widget config is failing.</p>
-    </div>
-  </div>
+  <div>Launching chat...</div>
 
   <script>
-    const statusEl = document.getElementById("status");
+    function openChat() {
+      const popupUrl = window.location.origin + window.location.pathname + "?popup=1";
 
-    function setStatus(text, good = false) {
-      statusEl.textContent = text;
-      statusEl.className = good ? "ok" : "bad";
+      const win = window.open(
+        popupUrl,
+        "RetellChatWindow",
+        "width=450,height=760,resizable=yes,scrollbars=no"
+      );
+
+      if (!win) {
+        document.body.innerHTML = "Popup blocked. Please allow popups for this site.";
+      }
     }
 
-    const script = document.createElement("script");
-    script.src = "https://dashboard.retellai.com/retell-widget.js";
-    script.type = "module";
-    script.id = "retell-widget";
-    script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
-    script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
-    script.setAttribute("data-auto-open", "true");
-    script.setAttribute("data-title", "AI Chat Assistant");
+    const params = new URLSearchParams(window.location.search);
+    const isPopup = params.get("popup") === "1";
 
-    script.onload = () => {
-      setStatus("Widget script loaded. Checking for chat UI…", true);
+    if (!isPopup) {
+      // Auto launch after short delay (helps avoid blocking)
+      setTimeout(openChat, 500);
+    } else {
+      // Popup content (chat only)
+      document.body.style.background = "transparent";
+      document.body.style.margin = "0";
+      document.body.style.overflow = "hidden";
 
-      setTimeout(() => {
-        const widgetFound =
-          document.querySelector('iframe[src*="retell"]') ||
-          document.querySelector('[id*="retell"]') ||
-          document.querySelector('[class*="retell"]');
+      const shell = document.createElement("div");
+      shell.style.width = "430px";
+      shell.style.height = "720px";
+      shell.style.margin = "auto";
+      shell.style.position = "absolute";
+      shell.style.top = "50%";
+      shell.style.left = "50%";
+      shell.style.transform = "translate(-50%, -50%)";
+      shell.style.borderRadius = "18px";
+      shell.style.overflow = "hidden";
+      shell.style.boxShadow = "0 18px 50px rgba(0,0,0,0.25)";
+      document.body.appendChild(shell);
 
-        if (widgetFound) {
-          setStatus("Retell widget rendered.", true);
-        } else {
-          setStatus("Widget script loaded, but no chat UI appeared. Most likely wrong agent type, wrong public key, or invalid key/agent pairing.");
+      const script = document.createElement("script");
+      script.src = "https://dashboard.retellai.com/retell-widget.js";
+      script.type = "module";
+      script.id = "retell-widget";
+      script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
+      script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
+      script.setAttribute("data-auto-open", "true");
+      document.head.appendChild(script);
+
+      const style = document.createElement("style");
+      style.innerHTML = `
+        iframe[src*="retell"],
+        div[id*="retell"],
+        div[class*="retell"] {
+          position: absolute !important;
+          inset: 0 !important;
+          width: 100% !important;
+          height: 100% !important;
         }
-      }, 4000);
-    };
-
-    script.onerror = () => {
-      setStatus("Failed to load Retell widget script.");
-    };
-
-    window.addEventListener("error", (e) => {
-      setStatus("Page error: " + e.message);
-    });
-
-    document.head.appendChild(script);
+      `;
+      document.head.appendChild(style);
+    }
   </script>
 </body>
 </html>
