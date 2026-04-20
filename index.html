@@ -1,460 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DayTradeMindAI</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DayTradeMindAI</title>
 
-  <style>
-    :root {
-      --bg: #f8f8fa;
-      --text: #353b4d;
-      --muted: #5e6475;
-      --card: #ffffff;
-      --border: #e8eaf0;
-      --accent: #111827;
-      --shadow: 0 16px 40px rgba(0, 0, 0, 0.10);
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f8f8fa;
+  color: #353b4d;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+/* ===== Layout ===== */
+.wrap {
+  max-width: 1200px;
+  margin: auto;
+  padding: 40px 24px;
+}
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+h1 {
+  font-size: 56px;
+  margin-bottom: 10px;
+}
 
-    body.site {
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+.subtitle {
+  font-size: 20px;
+  color: #5e6475;
+  margin-bottom: 40px;
+}
 
-    .wrap {
-      max-width: 1250px;
-      margin: 0 auto;
-      padding: 40px 28px 70px;
-    }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
 
-    .hero-title {
-      font-size: 64px;
-      font-weight: 700;
-      line-height: 1.08;
-      margin: 0 0 26px;
-      color: var(--text);
-      letter-spacing: -1px;
-    }
+.card {
+  display: flex;
+  gap: 15px;
+}
 
-    .hero-subtitle {
-      font-size: 20px;
-      line-height: 1.7;
-      color: var(--muted);
-      margin: 0 0 34px;
-      max-width: 900px;
-    }
+.card h3 {
+  margin: 0 0 6px;
+}
 
-    .top-actions {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      margin-bottom: 46px;
-    }
+.card p {
+  margin: 0;
+  color: #5e6475;
+  font-size: 15px;
+}
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 48px;
-      padding: 0 20px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      text-decoration: none;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
+/* ===== Floating Controls ===== */
+.floating-actions {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 9999;
+}
 
-    .btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-    }
+.chat-floating {
+  width: 80px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
 
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
+.chat-floating:hover {
+  transform: scale(1.1);
+}
 
-    .section-title {
-      font-size: 54px;
-      font-weight: 700;
-      line-height: 1.1;
-      margin: 0 0 18px;
-      color: var(--text);
-      letter-spacing: -0.5px;
-    }
+.return-btn {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #111827;
+  color: white;
+  cursor: pointer;
+}
 
-    .section-subtitle {
-      font-size: 19px;
-      color: var(--muted);
-      line-height: 1.7;
-      margin: 0 0 34px;
-      max-width: 850px;
-    }
+/* ===== Popup Chat ===== */
+body.popup {
+  margin: 0;
+  background: transparent;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .block-title {
-      font-size: 30px;
-      font-weight: 700;
-      margin: 0 0 26px;
-      color: var(--text);
-    }
+.chat-shell {
+  width: 430px;
+  height: 720px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
 
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 26px 34px;
-    }
-
-    .feature-card {
-      display: flex;
-      gap: 18px;
-      align-items: flex-start;
-      background: transparent;
-      border-radius: 18px;
-      min-height: 150px;
-    }
-
-    .feature-icon {
-      width: 60px;
-      height: 60px;
-      border: 2px solid var(--text);
-      border-radius: 16px;
-      flex: 0 0 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      color: var(--text);
-      background: transparent;
-    }
-
-    .feature-card h3 {
-      margin: 0 0 8px;
-      font-size: 24px;
-      line-height: 1.2;
-      color: var(--text);
-      font-weight: 700;
-    }
-
-    .feature-card p {
-      margin: 0;
-      font-size: 17px;
-      line-height: 1.65;
-      color: var(--muted);
-    }
-
-    .note {
-      margin-top: 36px;
-      font-size: 15px;
-      color: var(--muted);
-    }
-
-    body.popup {
-      width: 100vw;
-      height: 100vh;
-      margin: 0;
-      overflow: hidden;
-      background: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .chat-shell {
-      width: 430px;
-      height: 720px;
-      position: relative;
-      border-radius: 18px;
-      overflow: hidden;
-      background: transparent;
-      box-shadow: 0 24px 55px rgba(0, 0, 0, 0.22);
-    }
-
-    .loading {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: white;
-      color: #666;
-      font-size: 16px;
-      z-index: 0;
-    }
-
-    iframe[src*="retell"],
-    div[id*="retell"],
-    div[class*="retell"] {
-      position: absolute !important;
-      inset: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      max-width: 100% !important;
-      max-height: 100% !important;
-      border-radius: 18px !important;
-    }
-
-    @media (max-width: 1100px) {
-      .hero-title,
-      .section-title {
-        font-size: 48px;
-      }
-
-      .feature-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 700px) {
-      .wrap {
-        padding: 26px 20px 50px;
-      }
-
-      .hero-title,
-      .section-title {
-        font-size: 38px;
-      }
-
-      .hero-subtitle,
-      .section-subtitle,
-      .feature-card p {
-        font-size: 16px;
-      }
-
-      .feature-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .feature-card h3 {
-        font-size: 22px;
-      }
-    }
-  </style>
+iframe[src*="retell"],
+div[id*="retell"],
+div[class*="retell"] {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+</style>
 </head>
+
 <body>
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const isPopup = params.get("popup") === "1";
 
-    function openChatWindow() {
-      const popupUrl = window.location.origin + window.location.pathname + "?popup=1";
-      const win = window.open(
-        popupUrl,
-        "RetellChatWindow",
-        "width=450,height=760,resizable=yes,scrollbars=no"
-      );
+<script>
+const params = new URLSearchParams(window.location.search);
+const isPopup = params.get("popup") === "1";
 
-      if (!win) {
-        alert("Popup blocked. Please allow popups for this site.");
-        return;
-      }
+/* ===== Chat Functions ===== */
+function openChatWindow() {
+  const url = window.location.origin + window.location.pathname + "?popup=1";
+  const win = window.open(
+    url,
+    "ChatWindow",
+    "width=450,height=760,resizable=yes"
+  );
+  if (!win) alert("Popup blocked. Allow popups.");
+}
 
-      win.focus();
-    }
+function goHome() {
+  window.location.href = "https://daytrademindai.com";
+}
 
-    function buildMainPage() {
-      document.body.className = "site";
-      document.body.innerHTML = `
-        <div class="wrap">
-          <h1 class="hero-title">What the Platform Does</h1>
-          <p class="hero-subtitle">
-            A full suite of AI, ML, and trading tools — built for serious day traders.
-          </p>
+/* ===== Popup Page ===== */
+function buildPopup() {
+  document.body.className = "popup";
+  document.body.innerHTML = `<div class="chat-shell"></div>`;
 
-          <div class="top-actions">
-            <button class="btn btn-primary" onclick="openChatWindow()">Open Chat</button>
-          </div>
+  const script = document.createElement("script");
+  script.src = "https://dashboard.retellai.com/retell-widget.js";
+  script.type = "module";
+  script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
+  script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
+  script.setAttribute("data-auto-open", "true");
+  document.head.appendChild(script);
+}
 
-          <h2 class="section-title">Core Functionality</h2>
-          <p class="section-subtitle">
-            Explore the machine learning, charting, tracking, and decision-support tools
-            that power the platform.
-          </p>
+/* ===== Main Page ===== */
+function buildMain() {
+  document.body.innerHTML = `
+    <div class="wrap">
+      <h1>What the Platform Does</h1>
+      <p class="subtitle">
+        A full suite of AI, ML, and trading tools — built for serious day traders.
+      </p>
 
-          <div class="feature-grid">
-            <div class="feature-card">
-              <div class="feature-icon">🧠</div>
-              <div>
-                <h3>ML Breakout Prediction</h3>
-                <p>Uses machine learning models to estimate breakout probability and confidence for each stock.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">📈</div>
-              <div>
-                <h3>Breakout Confidence Scoring</h3>
-                <p>Scores each setup to show how strongly the system supports a possible breakout move.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">⚙️</div>
-              <div>
-                <h3>Multiple Model Modes (Standard & Super)</h3>
-                <p>Switch between different model behaviors depending on how aggressive or selective you want the scan to be.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">🧩</div>
-              <div>
-                <h3>Ensemble Model Support</h3>
-                <p>Combines multiple model outputs to strengthen selection logic and improve consistency.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">🎚️</div>
-              <div>
-                <h3>Custom Threshold Controls</h3>
-                <p>Lets users tune selection cutoffs and filtering rules to better fit their own strategy.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">🗂️</div>
-              <div>
-                <h3>Training Data Collection</h3>
-                <p>Captures scan results and outcomes to support retraining and model improvement over time.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">👤</div>
-              <div>
-                <h3>Per-user Optimization Settings</h3>
-                <p>Supports user-level adjustments so the platform can align better with individual workflows.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">🔍</div>
-              <div>
-                <h3>ML-Driven Decision Transparency</h3>
-                <p>Shows more of the reasoning behind the system’s choices instead of only returning raw scores.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">📊</div>
-              <div>
-                <h3>Multiple Chart Views (short & long-term)</h3>
-                <p>Gives traders both quick and broader views of price action for stronger context.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">🌅</div>
-              <div>
-                <h3>Premarket & Market Scan Charts</h3>
-                <p>Includes chart support for both premarket scans and live market scans.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">🖱️</div>
-              <div>
-                <h3>Interactive Chart Analysis</h3>
-                <p>Provides more hands-on review of charts so users can inspect setups more closely.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">🗃️</div>
-              <div>
-                <h3>Charts Analysis Tab</h3>
-                <p>Keeps chart-specific review organized in its own analysis area within the platform.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">📍</div>
-              <div>
-                <h3>Active Trade Tracking</h3>
-                <p>Monitors active positions and helps compare current trades against planned expectations.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">🕘</div>
-              <div>
-                <h3>Trade Tracking History & Outcome Review</h3>
-                <p>Stores previous trade outcomes for follow-up analysis and decision review.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">⬇️</div>
-              <div>
-                <h3>Historical Stats & Downloadable History</h3>
-                <p>Lets users review longer-term platform results and export tracking history for outside analysis.</p>
-              </div>
-            </div>
-
-            <div class="feature-card">
-              <div class="feature-icon">💰</div>
-              <div>
-                <h3>Profit Plan Monitoring</h3>
-                <p>Tracks trade plans and profit targets so users can monitor progress more clearly.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="note">
-            If the chat popup does not open automatically, your browser likely blocked popups. Use the Open Chat button above.
+      <div class="grid">
+        <div class="card">
+          <div>🔍</div>
+          <div>
+            <h3>Premarket Scan</h3>
+            <p>Identifies early breakout candidates before market open.</p>
           </div>
         </div>
-      `;
-    }
 
-    function buildPopupPage() {
-      document.body.className = "popup";
-      document.body.innerHTML = `
-        <div class="chat-shell">
-          <div class="loading">Loading chat...</div>
+        <div class="card">
+          <div>📈</div>
+          <div>
+            <h3>Market Scan</h3>
+            <p>Analyzes live stocks using price action and signals.</p>
+          </div>
         </div>
-      `;
 
-      const script = document.createElement("script");
-      script.id = "retell-widget";
-      script.src = "https://dashboard.retellai.com/retell-widget.js";
-      script.type = "module";
-      script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
-      script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
-      script.setAttribute("data-auto-open", "true");
-      script.setAttribute("data-title", "AI Chat Assistant");
-      document.head.appendChild(script);
+        <div class="card">
+          <div>🤖</div>
+          <div>
+            <h3>AI Analysis</h3>
+            <p>Generates insights and trade-support reasoning.</p>
+          </div>
+        </div>
 
-      setTimeout(() => {
-        const loading = document.querySelector(".loading");
-        if (loading) loading.style.display = "none";
-      }, 4000);
-    }
+        <div class="card">
+          <div>🧠</div>
+          <div>
+            <h3>ML Prediction</h3>
+            <p>Estimates breakout probability and confidence.</p>
+          </div>
+        </div>
 
-    if (isPopup) {
-      buildPopupPage();
-    } else {
-      buildMainPage();
-      setTimeout(() => {
-        openChatWindow();
-      }, 700);
-    }
-  </script>
+        <div class="card">
+          <div>💰</div>
+          <div>
+            <h3>Profit Plan</h3>
+            <p>Builds structured trading plans.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div>⚖️</div>
+          <div>
+            <h3>Risk Allocation</h3>
+            <p>Balances trade selection by risk tiers.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Controls -->
+    <div class="floating-actions">
+      <img src="chat.gif" onclick="openChatWindow()" class="chat-floating"/>
+      <button onclick="goHome()" class="return-btn">Return</button>
+    </div>
+  `;
+
+  // Auto open chat (optional)
+  setTimeout(openChatWindow, 800);
+}
+
+/* ===== Init ===== */
+if (isPopup) {
+  buildPopup();
+} else {
+  buildMain();
+}
+</script>
+
 </body>
 </html>
