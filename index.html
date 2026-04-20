@@ -1,114 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Chat</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Launch Chat</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      height: 100%;
+    }
 
-<style>
-html, body {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: Arial, sans-serif;
-}
+    body.launcher {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
 
-/* Outer wrapper (fake window) */
-.app-window {
-  width: 430px;
-  height: 760px;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.25);
-  background: #f5f7fb;
-  display: flex;
-  flex-direction: column;
-}
+    .status {
+      color: #374151;
+      font-size: 16px;
+    }
 
-/* Top bar */
-.header {
-  height: 50px;
-  background: #111827;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-  font-size: 14px;
-}
+    body.popup {
+      background: #f5f7fb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
 
-/* Return button */
-.return-btn {
-  background: white;
-  color: #111827;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 10px;
-  cursor: pointer;
-  font-weight: bold;
-}
+    .app-window {
+      width: 430px;
+      height: 760px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+      background: white;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
 
-/* Chat area */
-.chat-area {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  background: white;
-}
+    .header {
+      height: 52px;
+      background: #111827;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      flex-shrink: 0;
+      font-size: 15px;
+      font-weight: 600;
+    }
 
-/* FORCE widget into center area */
-iframe[src*="retell"],
-div[id*="retell"],
-div[class*="retell"] {
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  max-width: 100% !important;
-  max-height: 100% !important;
-}
+    .return-btn {
+      background: white;
+      color: #111827;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+    }
 
-/* Hide floating launcher button */
-button[class*="retell"],
-div[class*="launcher"] {
-  display: none !important;
-}
-</style>
+    .chat-area {
+      flex: 1;
+      position: relative;
+      background: white;
+      overflow: hidden;
+    }
+
+    .loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      font-size: 15px;
+      z-index: 0;
+      background: white;
+    }
+
+    iframe[src*="retell"],
+    div[id*="retell"],
+    div[class*="retell"] {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+    }
+  </style>
 </head>
-
 <body>
+  <script>
+    const isPopup = new URLSearchParams(window.location.search).get("popup") === "1";
 
-<div class="app-window">
+    function goHome() {
+      window.location.href = "https://daytrademindai.com";
+    }
 
-  <div class="header">
-    <span>AI Chat Assistant</span>
-    <button class="return-btn" onclick="goHome()">Return</button>
-  </div>
+    function openPopup() {
+      const popupUrl = window.location.origin + window.location.pathname + "?popup=1";
+      const win = window.open(
+        popupUrl,
+        "DayTradeMindAIChat",
+        "width=470,height=830,left=200,top=80,resizable=yes,scrollbars=no"
+      );
 
-  <div class="chat-area"></div>
+      if (!win) {
+        document.body.innerHTML = '<div class="status">Popup blocked. Please allow popups for this site.</div>';
+        return;
+      }
 
-</div>
+      win.focus();
+      document.body.innerHTML = '<div class="status">Chat window opened. You can close this tab.</div>';
+    }
 
-<script>
-function goHome() {
-  window.location.href = "https://daytrademindai.com";
-}
+    if (!isPopup) {
+      document.body.className = "launcher";
+      document.body.innerHTML = '<div class="status">Launching chat...</div>';
+      setTimeout(openPopup, 400);
+    } else {
+      document.body.className = "popup";
+      document.body.innerHTML = `
+        <div class="app-window">
+          <div class="header">
+            <span>AI Chat Assistant</span>
+            <button class="return-btn" onclick="goHome()">Return to Site</button>
+          </div>
+          <div class="chat-area">
+            <div class="loading">Loading chat...</div>
+          </div>
+        </div>
+      `;
 
-/* Load Retell widget */
-const script = document.createElement("script");
-script.src = "https://dashboard.retellai.com/retell-widget.js";
-script.type = "module";
-script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
-script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
-script.setAttribute("data-auto-open", "true");
+      const script = document.createElement("script");
+      script.src = "https://dashboard.retellai.com/retell-widget.js";
+      script.type = "module";
+      script.id = "retell-widget";
+      script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
+      script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
+      script.setAttribute("data-auto-open", "true");
+      script.setAttribute("data-title", "AI Chat Assistant");
 
-document.head.appendChild(script);
-</script>
+      script.onload = () => {
+        setTimeout(() => {
+          const loading = document.querySelector(".loading");
+          if (loading) loading.style.display = "none";
+        }, 3000);
+      };
 
+      script.onerror = () => {
+        const loading = document.querySelector(".loading");
+        if (loading) loading.textContent = "Failed to load chat widget.";
+      };
+
+      document.head.appendChild(script);
+    }
+  </script>
 </body>
 </html>
