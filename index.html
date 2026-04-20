@@ -2,54 +2,109 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Launch Chat</title>
 
-  <script>
-    function openChatWindow() {
-      const chatHTML = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8" />
-          <title>Chat</title>
-
-          <script
-            src="https://dashboard.retellai.com/retell-widget.js"
-            type="module"
-            data-public-key="public_key_0b74d32971e4364d15024"
-            data-agent-id="agent_a22e71c2e4717d7c80a03616c5"
-            data-auto-open="true"
-          ><\/script>
-
-          <style>
-            body {
-              margin: 0;
-              background: white;
-            }
-          </style>
-        </head>
-        <body></body>
-        </html>
-      `;
-
-      const chatWindow = window.open(
-        "",
-        "ChatWindow",
-        "width=420,height=700,resizable=no,scrollbars=no"
-      );
-
-      if (chatWindow) {
-        chatWindow.document.write(chatHTML);
-        chatWindow.document.close();
-      } else {
-        alert("Popup blocked. Please allow popups for this site.");
-      }
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #ffffff;
     }
 
-    window.onload = openChatWindow;
-  </script>
-</head>
+    body.launcher {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
+    .launcher-box {
+      text-align: center;
+      padding: 24px;
+    }
+
+    .launcher-box h1 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      color: #111827;
+    }
+
+    .launcher-box p {
+      margin: 0 0 18px;
+      color: #4b5563;
+    }
+
+    .launcher-box button {
+      padding: 12px 18px;
+      font-size: 16px;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+    }
+
+    body.popup {
+      width: 430px;
+      height: 720px;
+      overflow: hidden;
+    }
+
+    .popup-note {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6b7280;
+      font-size: 15px;
+      background: white;
+      z-index: 0;
+    }
+  </style>
+</head>
 <body>
+  <script>
+    const isPopup = new URLSearchParams(window.location.search).get("popup") === "1";
+
+    if (!isPopup) {
+      document.body.className = "launcher";
+      document.body.innerHTML = `
+        <div class="launcher-box">
+          <h1>AI Chat Assistant</h1>
+          <p>Open the chat in a small window.</p>
+          <button id="openChatBtn">Open Chat</button>
+        </div>
+      `;
+
+      document.getElementById("openChatBtn").addEventListener("click", () => {
+        const popupUrl = window.location.origin + window.location.pathname + "?popup=1";
+        const win = window.open(
+          popupUrl,
+          "RetellChatWindow",
+          "width=430,height=720,resizable=yes,scrollbars=no"
+        );
+
+        if (!win) {
+          alert("Popup blocked. Please allow popups for this site and try again.");
+        }
+      });
+    } else {
+      document.body.className = "popup";
+      document.body.innerHTML = `<div class="popup-note">Loading chat...</div>`;
+
+      const script = document.createElement("script");
+      script.id = "retell-widget";
+      script.src = "https://dashboard.retellai.com/retell-widget.js";
+      script.type = "module";
+      script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
+      script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
+      script.setAttribute("data-auto-open", "true");
+      script.setAttribute("data-title", "AI Chat Assistant");
+      document.head.appendChild(script);
+    }
+  </script>
 </body>
 </html>
