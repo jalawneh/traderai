@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Launch Chat</title>
-
+  <title>Retell Chat Launcher</title>
   <style>
     html, body {
       margin: 0;
@@ -50,24 +49,36 @@
       width: 430px;
       height: 720px;
       overflow: hidden;
+      background: #ffffff;
     }
 
-    .popup-note {
+    .status {
       position: fixed;
       inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #6b7280;
-      font-size: 15px;
-      background: white;
-      z-index: 0;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+      color: #374151;
+      background: #ffffff;
+      z-index: 1;
+    }
+
+    .status.error {
+      color: #b91c1c;
     }
   </style>
 </head>
 <body>
   <script>
-    const isPopup = new URLSearchParams(window.location.search).get("popup") === "1";
+    const params = new URLSearchParams(window.location.search);
+    const isPopup = params.get("popup") === "1";
+
+    function setStatus(message, isError = false) {
+      document.body.innerHTML = `<div class="status ${isError ? "error" : ""}">${message}</div>`;
+    }
 
     if (!isPopup) {
       document.body.className = "launcher";
@@ -88,22 +99,47 @@
         );
 
         if (!win) {
-          alert("Popup blocked. Please allow popups for this site and try again.");
+          alert("Popup blocked. Please allow popups for this site.");
         }
       });
     } else {
       document.body.className = "popup";
-      document.body.innerHTML = `<div class="popup-note">Loading chat...</div>`;
+      setStatus("Loading chat...");
 
       const script = document.createElement("script");
-      script.id = "retell-widget";
       script.src = "https://dashboard.retellai.com/retell-widget.js";
       script.type = "module";
+      script.id = "retell-widget";
       script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
       script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
       script.setAttribute("data-auto-open", "true");
       script.setAttribute("data-title", "AI Chat Assistant");
+
+      script.onload = () => {
+        setTimeout(() => {
+          const hasWidget =
+            document.querySelector('iframe[src*="retell"]') ||
+            document.querySelector('[id*="retell"]') ||
+            document.querySelector('[class*="retell"]');
+
+          if (!hasWidget) {
+            setStatus(
+              "Retell widget loaded, but no chat window appeared. This usually means the agent ID or public key is invalid, or the agent is not a chat agent.",
+              true
+            );
+          }
+        }, 4000);
+      };
+
+      script.onerror = () => {
+        setStatus("Failed to load Retell widget script.", true);
+      };
+
       document.head.appendChild(script);
+
+      window.addEventListener("error", (e) => {
+        setStatus("Page error: " + e.message, true);
+      });
     }
   </script>
 </body>
