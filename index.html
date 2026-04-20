@@ -4,15 +4,107 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Retell Chat Test</title>
-  <script
-    src="https://dashboard.retellai.com/retell-widget.js"
-    type="module"
-    data-public-key="public_key_0b74d32971e4364d15024"
-    data-agent-id="agent_a22e71c2e4717d7c80a03616c5"
-    data-auto-open="true"
-    data-title="AI Chat Assistant"
-  ></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      color: #111827;
+    }
+
+    .wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    .card {
+      max-width: 520px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      background: #fff;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 24px;
+    }
+
+    p {
+      margin: 8px 0;
+      line-height: 1.5;
+      color: #4b5563;
+    }
+
+    .ok {
+      color: #065f46;
+      font-weight: 600;
+    }
+
+    .bad {
+      color: #b91c1c;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Retell Chat Test</h1>
+      <p id="status">Loading widget…</p>
+      <p>If the chat launcher or chat window does not appear, then the page is fine and the Retell widget config is failing.</p>
+    </div>
+  </div>
+
+  <script>
+    const statusEl = document.getElementById("status");
+
+    function setStatus(text, good = false) {
+      statusEl.textContent = text;
+      statusEl.className = good ? "ok" : "bad";
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://dashboard.retellai.com/retell-widget.js";
+    script.type = "module";
+    script.id = "retell-widget";
+    script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
+    script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
+    script.setAttribute("data-auto-open", "true");
+    script.setAttribute("data-title", "AI Chat Assistant");
+
+    script.onload = () => {
+      setStatus("Widget script loaded. Checking for chat UI…", true);
+
+      setTimeout(() => {
+        const widgetFound =
+          document.querySelector('iframe[src*="retell"]') ||
+          document.querySelector('[id*="retell"]') ||
+          document.querySelector('[class*="retell"]');
+
+        if (widgetFound) {
+          setStatus("Retell widget rendered.", true);
+        } else {
+          setStatus("Widget script loaded, but no chat UI appeared. Most likely wrong agent type, wrong public key, or invalid key/agent pairing.");
+        }
+      }, 4000);
+    };
+
+    script.onerror = () => {
+      setStatus("Failed to load Retell widget script.");
+    };
+
+    window.addEventListener("error", (e) => {
+      setStatus("Page error: " + e.message);
+    });
+
+    document.head.appendChild(script);
+  </script>
 </body>
 </html>
