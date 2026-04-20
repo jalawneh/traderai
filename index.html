@@ -2,104 +2,61 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DayTradeMindAI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Chat</title>
 
 <style>
-body {
+html, body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f8f8fa;
-  color: #353b4d;
-}
-
-/* ===== Layout ===== */
-.wrap {
-  max-width: 1200px;
-  margin: auto;
-  padding: 40px 24px;
-}
-
-h1 {
-  font-size: 56px;
-  margin-bottom: 10px;
-}
-
-.subtitle {
-  font-size: 20px;
-  color: #5e6475;
-  margin-bottom: 40px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
-}
-
-.card {
-  display: flex;
-  gap: 15px;
-}
-
-.card h3 {
-  margin: 0 0 6px;
-}
-
-.card p {
-  margin: 0;
-  color: #5e6475;
-  font-size: 15px;
-}
-
-/* ===== Floating Controls ===== */
-.floating-actions {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  z-index: 9999;
-}
-
-.chat-floating {
-  width: 80px;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.chat-floating:hover {
-  transform: scale(1.1);
-}
-
-.return-btn {
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: none;
-  background: #111827;
-  color: white;
-  cursor: pointer;
-}
-
-/* ===== Popup Chat ===== */
-body.popup {
-  margin: 0;
-  background: transparent;
-  overflow: hidden;
+  padding: 0;
+  height: 100%;
+  background: #f5f7fb;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: Arial, sans-serif;
 }
 
-.chat-shell {
+/* Chat container */
+.chat-container {
   width: 430px;
   height: 720px;
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  background: white;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Top bar */
+.chat-header {
+  height: 50px;
+  background: #111827;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+/* Return button */
+.return-btn {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Chat area (Retell fills this) */
+.chat-body {
+  flex: 1;
+  position: relative;
+}
+
+/* Force Retell to fill container */
 iframe[src*="retell"],
 div[id*="retell"],
 div[class*="retell"] {
@@ -113,116 +70,31 @@ div[class*="retell"] {
 
 <body>
 
+<div class="chat-container">
+
+  <div class="chat-header">
+    <span>AI Chat Assistant</span>
+    <button class="return-btn" onclick="goHome()">Return</button>
+  </div>
+
+  <div class="chat-body"></div>
+
+</div>
+
 <script>
-const params = new URLSearchParams(window.location.search);
-const isPopup = params.get("popup") === "1";
-
-/* ===== Chat Functions ===== */
-function openChatWindow() {
-  const url = window.location.origin + window.location.pathname + "?popup=1";
-  const win = window.open(
-    url,
-    "ChatWindow",
-    "width=450,height=760,resizable=yes"
-  );
-  if (!win) alert("Popup blocked. Allow popups.");
-}
-
 function goHome() {
   window.location.href = "https://daytrademindai.com";
 }
 
-/* ===== Popup Page ===== */
-function buildPopup() {
-  document.body.className = "popup";
-  document.body.innerHTML = `<div class="chat-shell"></div>`;
+/* Load Retell widget */
+const script = document.createElement("script");
+script.src = "https://dashboard.retellai.com/retell-widget.js";
+script.type = "module";
+script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
+script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
+script.setAttribute("data-auto-open", "true");
 
-  const script = document.createElement("script");
-  script.src = "https://dashboard.retellai.com/retell-widget.js";
-  script.type = "module";
-  script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
-  script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
-  script.setAttribute("data-auto-open", "true");
-  document.head.appendChild(script);
-}
-
-/* ===== Main Page ===== */
-function buildMain() {
-  document.body.innerHTML = `
-    <div class="wrap">
-      <h1>What the Platform Does</h1>
-      <p class="subtitle">
-        A full suite of AI, ML, and trading tools — built for serious day traders.
-      </p>
-
-      <div class="grid">
-        <div class="card">
-          <div>🔍</div>
-          <div>
-            <h3>Premarket Scan</h3>
-            <p>Identifies early breakout candidates before market open.</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div>📈</div>
-          <div>
-            <h3>Market Scan</h3>
-            <p>Analyzes live stocks using price action and signals.</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div>🤖</div>
-          <div>
-            <h3>AI Analysis</h3>
-            <p>Generates insights and trade-support reasoning.</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div>🧠</div>
-          <div>
-            <h3>ML Prediction</h3>
-            <p>Estimates breakout probability and confidence.</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div>💰</div>
-          <div>
-            <h3>Profit Plan</h3>
-            <p>Builds structured trading plans.</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <div>⚖️</div>
-          <div>
-            <h3>Risk Allocation</h3>
-            <p>Balances trade selection by risk tiers.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Floating Controls -->
-    <div class="floating-actions">
-      <img src="chat.gif" onclick="openChatWindow()" class="chat-floating"/>
-      <button onclick="goHome()" class="return-btn">Return</button>
-    </div>
-  `;
-
-  // Auto open chat (optional)
-  setTimeout(openChatWindow, 800);
-}
-
-/* ===== Init ===== */
-if (isPopup) {
-  buildPopup();
-} else {
-  buildMain();
-}
+document.head.appendChild(script);
 </script>
 
 </body>
