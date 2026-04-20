@@ -2,131 +2,72 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Chat Assistant</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/retell-client-js-sdk@2.0.7/dist/index.min.js"></script>
 
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background: #f5f7fb;
+      min-height: 100vh;
     }
 
-    #chat-container {
+    .page-wrap {
       display: flex;
-      flex-direction: column;
-      height: 100vh;
-      max-width: 900px;
-      margin: auto;
-      background: white;
-    }
-
-    #messages {
-      flex: 1;
-      overflow-y: auto;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
       padding: 20px;
+      box-sizing: border-box;
     }
 
-    .message {
-      margin-bottom: 12px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      max-width: 70%;
+    .content {
+      max-width: 900px;
     }
 
-    .user {
-      background: #2563eb;
-      color: white;
-      margin-left: auto;
+    .content h1 {
+      margin-bottom: 10px;
+      font-size: 2.2rem;
+      color: #1f2937;
     }
 
-    .agent {
-      background: #e5e7eb;
-      color: black;
-      margin-right: auto;
+    .content p {
+      margin: 0;
+      font-size: 1.1rem;
+      color: #4b5563;
+      line-height: 1.6;
     }
 
-    #input-bar {
-      display: flex;
-      border-top: 1px solid #ddd;
-    }
-
-    #user-input {
-      flex: 1;
-      padding: 15px;
-      border: none;
-      font-size: 16px;
-      outline: none;
-    }
-
-    button {
-      padding: 15px 20px;
-      border: none;
-      background: #2563eb;
-      color: white;
-      cursor: pointer;
+    /* Try to enlarge the opened widget/modal */
+    iframe[src*="retell"],
+    div[id*="retell"],
+    div[class*="retell"] {
+      max-width: 95vw !important;
+      max-height: 90vh !important;
     }
   </style>
+
+  <script
+    id="retell-widget"
+    src="https://dashboard.retellai.com/retell-widget.js"
+    type="module"
+    data-public-key="public_key_0b74d32971e4364d15024"
+    data-agent-id="agent_a22e71c2e4717d7c80a03616c5"
+    data-title="AI Chat Assistant"
+    data-popup-message="Hi! How can I help?"
+    data-show-ai-popup="true"
+    data-show-ai-popup-time="3"
+    data-auto-open="false"
+  ></script>
 </head>
-
 <body>
-  <div id="chat-container">
-    <div id="messages"></div>
-
-    <div id="input-bar">
-      <input id="user-input" placeholder="Type a message..." />
-      <button onclick="sendMessage()">Send</button>
+  <div class="page-wrap">
+    <div class="content">
+      <h1>AI Chat Assistant</h1>
+      <p>Click the chat icon in the corner to start chatting.</p>
     </div>
   </div>
-
-  <script>
-    const client = new RetellWebClient();
-    let currentAgentMessage = null;
-
-    function addMessage(text, role) {
-      const msg = document.createElement("div");
-      msg.className = `message ${role}`;
-      msg.textContent = text;
-      document.getElementById("messages").appendChild(msg);
-      msg.scrollIntoView();
-      return msg;
-    }
-
-    function sendMessage() {
-      const input = document.getElementById("user-input");
-      const text = input.value.trim();
-      if (!text) return;
-
-      addMessage(text, "user");
-      input.value = "";
-
-      currentAgentMessage = addMessage("", "agent");
-
-      client.sendMessage({ text });
-    }
-
-    // 🔥 STREAMING RESPONSE
-    client.on("agent_response", (data) => {
-      if (!currentAgentMessage) return;
-      currentAgentMessage.textContent += data.delta;
-    });
-
-    // optional: handle end
-    client.on("agent_response_end", () => {
-      currentAgentMessage = null;
-    });
-
-    // 🔑 START SESSION (REQUIRED)
-    async function startSession() {
-      await client.startConversation({
-        publicKey: "public_key_0b74d32971e4364d15024",
-        agentId: "agent_a22e71c2e4717d7c80a03616c5"
-      });
-    }
-
-    startSession();
-  </script>
 </body>
 </html>
