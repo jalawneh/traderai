@@ -2,38 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=400, height=700, initial-scale=1.0"/>
   <title>Chat Only</title>
 
   <style>
-    /* Remove all page content */
-    body {
+    html, body {
       margin: 0;
-      background: #000; /* optional */
+      padding: 0;
+
+      width: 400px;
+      height: 700px;
+
       overflow: hidden;
+      background: transparent;
     }
 
-    /* Hide everything except widget */
-    body > *:not(#retell-widget) {
-      display: none !important;
-    }
-
-    /* Force widget to appear centered & large */
+    /* Center widget inside this fixed-size page */
     iframe[src*="retell"],
     div[id*="retell"],
     div[class*="retell"] {
       position: fixed !important;
-      top: 50% !important;
-      left: 50% !important;
-      transform: translate(-50%, -50%) !important;
+      bottom: 0 !important;
+      right: 0 !important;
 
-      width: 90vw !important;
-      height: 90vh !important;
-
-      max-width: 900px !important;
-      max-height: 800px !important;
-
-      border-radius: 12px !important;
+      width: 100% !important;
+      height: 100% !important;
     }
   </style>
 
