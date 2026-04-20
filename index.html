@@ -2,8 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Retell Chat Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat Only</title>
+
+  <style>
+    /* Remove all page content */
+    body {
+      margin: 0;
+      background: #000; /* optional */
+      overflow: hidden;
+    }
+
+    /* Hide everything except widget */
+    body > *:not(#retell-widget) {
+      display: none !important;
+    }
+
+    /* Force widget to appear centered & large */
+    iframe[src*="retell"],
+    div[id*="retell"],
+    div[class*="retell"] {
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+
+      width: 90vw !important;
+      height: 90vh !important;
+
+      max-width: 900px !important;
+      max-height: 800px !important;
+
+      border-radius: 12px !important;
+    }
+  </style>
 
   <script
     id="retell-widget"
@@ -11,11 +43,9 @@
     type="module"
     data-public-key="public_key_0b74d32971e4364d15024"
     data-agent-id="agent_a22e71c2e4717d7c80a03616c5"
-    data-title="AI Chat Assistant"
     data-auto-open="true"
   ></script>
 </head>
 <body>
-  <h1>Retell Chat Test</h1>
 </body>
 </html>
