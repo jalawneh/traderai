@@ -5,11 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Launch Chat</title>
   <style>
+    :root {
+      --bg: #f6f8fc;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #667085;
+      --border: #e5e7eb;
+      --navy: #0f172a;
+      --blue: #2563eb;
+      --shadow: 0 24px 60px rgba(15, 23, 42, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     html, body {
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      background: #f5f7fb;
+      background: var(--bg);
       height: 100%;
     }
 
@@ -20,60 +35,186 @@
       min-height: 100vh;
     }
 
-    .status {
-      color: #374151;
+    .launch-status {
+      color: var(--text);
       font-size: 16px;
+      padding: 18px 22px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
     }
 
     body.popup {
-      background: #f5f7fb;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      padding: 18px;
       overflow: hidden;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,0.08), transparent 30%),
+        linear-gradient(180deg, #f8fbff 0%, #f5f7fb 100%);
     }
 
-    .app-window {
-      width: 430px;
+    .app-shell {
+      width: 1180px;
       height: 760px;
-      border-radius: 20px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
       overflow: hidden;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.25);
-      background: white;
-      display: flex;
-      flex-direction: column;
-      position: relative;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1.15fr 0.95fr;
     }
 
-    .header {
-      height: 52px;
-      background: #111827;
-      color: white;
+    .info-panel {
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      border-right: 1px solid var(--border);
+      padding: 30px 30px 24px;
+      overflow-y: auto;
+    }
+
+    .top-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 14px;
-      flex-shrink: 0;
-      font-size: 15px;
-      font-weight: 600;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
     }
 
     .return-btn {
-      background: white;
-      color: #111827;
+      background: var(--navy);
+      color: #fff;
       border: none;
-      border-radius: 8px;
-      padding: 7px 12px;
-      cursor: pointer;
-      font-size: 13px;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 14px;
       font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
     }
 
-    .chat-area {
+    .return-btn:hover {
+      opacity: 0.94;
+    }
+
+    .hero-title {
+      margin: 0 0 10px;
+      font-size: 40px;
+      line-height: 1.08;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .hero-subtitle {
+      margin: 0 0 20px;
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--muted);
+      max-width: 90%;
+    }
+
+    .assistant-note {
+      margin: 0 0 24px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: #eef4ff;
+      border: 1px solid #dbe7ff;
+      color: #29467a;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      font-size: 24px;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .feature-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .feature-card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      line-height: 1.25;
+      color: var(--text);
+    }
+
+    .feature-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .chat-panel {
+      background: #f8fafc;
+      padding: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chat-window {
+      width: 100%;
+      max-width: 450px;
+      height: 100%;
+      max-height: 716px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: 0 18px 42px rgba(15, 23, 42, 0.10);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      height: 58px;
+      background: var(--navy);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 15px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .chat-subtitle {
+      font-size: 12px;
+      font-weight: 400;
+      opacity: 0.82;
+      margin-top: 2px;
+    }
+
+    .chat-body {
       flex: 1;
       position: relative;
-      background: white;
+      background: #fff;
       overflow: hidden;
     }
 
@@ -83,10 +224,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #6b7280;
+      color: var(--muted);
       font-size: 15px;
+      background: #fff;
       z-index: 0;
-      background: white;
     }
 
     iframe[src*="retell"],
@@ -98,6 +239,14 @@
       height: 100% !important;
       max-width: 100% !important;
       max-height: 100% !important;
+    }
+
+    @media (max-width: 1200px) {
+      .app-shell {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+      }
     }
   </style>
 </head>
@@ -114,33 +263,122 @@
       const win = window.open(
         popupUrl,
         "DayTradeMindAIChat",
-        "width=470,height=830,left=200,top=80,resizable=yes,scrollbars=no"
+        "width=1220,height=840,left=120,top=60,resizable=yes,scrollbars=yes"
       );
 
       if (!win) {
-        document.body.innerHTML = '<div class="status">Popup blocked. Please allow popups for this site.</div>';
+        document.body.innerHTML = '<div class="launch-status">Popup blocked. Please allow popups for this site.</div>';
         return;
       }
 
       win.focus();
-      document.body.innerHTML = '<div class="status">Chat window opened. You can close this tab.</div>';
+      document.body.innerHTML = '<div class="launch-status">Chat window opened. You can close this tab.</div>';
     }
 
-    if (!isPopup) {
-      document.body.className = "launcher";
-      document.body.innerHTML = '<div class="status">Launching chat...</div>';
-      setTimeout(openPopup, 400);
-    } else {
+    function buildPopupPage() {
       document.body.className = "popup";
       document.body.innerHTML = `
-        <div class="app-window">
-          <div class="header">
-            <span>AI Chat Assistant</span>
-            <button class="return-btn" onclick="goHome()">Return to Site</button>
-          </div>
-          <div class="chat-area">
-            <div class="loading">Loading chat...</div>
-          </div>
+        <div class="app-shell">
+          <section class="info-panel">
+            <div class="top-row">
+              <div class="brand">DayTradeMindAI</div>
+              <button class="return-btn" onclick="goHome()">Return to Site</button>
+            </div>
+
+            <h1 class="hero-title">What the Platform Does</h1>
+            <p class="hero-subtitle">
+              A full suite of AI, ML, and trading tools — built for serious day traders.
+            </p>
+
+            <div class="assistant-note">
+              Chat with our virtual assistant for help understanding product features,
+              platform workflows, trading tools, scan logic, and anything else you need
+              while exploring the system.
+            </div>
+
+            <h2 class="section-title">Core Functionality</h2>
+
+            <div class="feature-grid">
+              <div class="feature-card">
+                <h3>Premarket Scan</h3>
+                <p>Identifies early-morning stocks showing breakout potential before the market opens.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Market Scan</h3>
+                <p>Scans the live market for active stocks using price action, volume, technical signals, and breakout analysis.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>AI-Powered Analysis</h3>
+                <p>Generates stock insights, summaries, and trade-support reasoning from market data and technical conditions.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>ML Breakout Prediction</h3>
+                <p>Uses ML models to estimate breakout probability and confidence for each stock.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Smart Profit Plan</h3>
+                <p>Builds structured trade plans from selected opportunities based on scoring, ranking, and allocation logic.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Risk Allocation</h3>
+                <p>Classifies candidates by risk tier and supports more balanced trade selection.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Custom ML Optimization</h3>
+                <p>Lets users adjust thresholds, ranking weights, and selection settings to match their own strategy.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Model Training Support</h3>
+                <p>Captures scan and outcome data that can be used to improve and retrain models over time.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Technical & Sentiment Scoring</h3>
+                <p>Combines momentum, volume, technical indicators, and sentiment into practical decision support.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Chart Analysis</h3>
+                <p>Displays short-term and longer-term charts to help users visually confirm setups and trends.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Active Trade Tracking</h3>
+                <p>Helps monitor open trades and review progress after entry.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Historical Logging & Review</h3>
+                <p>Stores scan activity and trade-related records for analysis, learning, and model improvement.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Personalized Settings</h3>
+                <p>Supports user-specific preferences for ranking controls, pool-entry rules, and workflow configuration.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="chat-panel">
+            <div class="chat-window">
+              <div class="chat-header">
+                <div>
+                  <div>Virtual Assistant</div>
+                  <div class="chat-subtitle">Ask about features, workflows, and product help</div>
+                </div>
+              </div>
+              <div class="chat-body">
+                <div class="loading">Loading chat...</div>
+              </div>
+            </div>
+          </section>
         </div>
       `;
 
@@ -151,7 +389,7 @@
       script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
       script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
       script.setAttribute("data-auto-open", "true");
-      script.setAttribute("data-title", "AI Chat Assistant");
+      script.setAttribute("data-title", "Virtual Assistant");
 
       script.onload = () => {
         setTimeout(() => {
@@ -166,6 +404,14 @@
       };
 
       document.head.appendChild(script);
+    }
+
+    if (!isPopup) {
+      document.body.className = "launcher";
+      document.body.innerHTML = '<div class="launch-status">Launching chat window...</div>';
+      setTimeout(openPopup, 400);
+    } else {
+      buildPopupPage();
     }
   </script>
 </body>
