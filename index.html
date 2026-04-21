@@ -1,181 +1,330 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Launch Chat</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Launch Chat</title>
 
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f7fb;
-}
+  <style>
+    :root {
+      --bg: #f6f8fc;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #667085;
+      --border: #e5e7eb;
+      --navy: #0f172a;
+      --shadow: 0 24px 60px rgba(15, 23, 42, 0.16);
+    }
 
-/* POPUP LAYOUT */
-.popup {
-  display: flex;
-  height: 100vh;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-/* LEFT PANEL */
-.info {
-  width: 55%;
-  padding: 30px;
-  overflow-y: auto;
-}
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+    }
 
-.info h1 {
-  font-size: 42px;
-  margin-bottom: 10px;
-}
+    body.launcher {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
 
-.info p {
-  color: #5e6475;
-  line-height: 1.6;
-}
+    .launch-status {
+      color: var(--text);
+      font-size: 16px;
+      padding: 18px 22px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
 
-.highlight {
-  background: #eef4ff;
-  padding: 15px;
-  border-radius: 12px;
-  margin: 20px 0;
-}
+    body.popup {
+      min-height: 100vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,0.08), transparent 30%),
+        linear-gradient(180deg, #f8fbff 0%, #f5f7fb 100%);
+    }
 
-/* RIGHT CHAT PANEL */
-.chat-wrap {
-  width: 45%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+    .page-shell {
+      width: 100%;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 34px 32px 48px;
+    }
 
-.chat-box {
-  width: 420px;
-  height: 720px;
-  background: white;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-  display: flex;
-  flex-direction: column;
-}
+    .content-wrap {
+      max-width: 760px;
+    }
 
-/* HEADER */
-.header {
-  height: 50px;
-  background: #111827;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-}
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
 
-.return-btn {
-  background: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
+    .brand {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
 
-/* CHAT AREA */
-.chat-area {
-  flex: 1;
-  position: relative;
-}
+    .return-btn {
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.16);
+    }
 
-/* FORCE EMBED */
-iframe[src*="retell"],
-div[id*="retell"],
-div[class*="retell"] {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-}
+    .return-btn:hover {
+      opacity: 0.94;
+    }
 
-/* 🔥 HIDE FLOATING WIDGET */
-button[class*="retell"],
-div[class*="launcher"],
-div[style*="bottom"] {
-  display: none !important;
-}
-</style>
+    h1 {
+      margin: 0 0 12px;
+      font-size: 62px;
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      color: var(--text);
+    }
+
+    .subtitle {
+      margin: 0 0 26px;
+      font-size: 20px;
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 700px;
+    }
+
+    .highlight {
+      margin: 0 0 28px;
+      padding: 20px 22px;
+      border-radius: 18px;
+      background: #eef4ff;
+      border: 1px solid #dbe7ff;
+      color: #29467a;
+      line-height: 1.7;
+      font-size: 17px;
+      max-width: 720px;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 30px;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      max-width: 720px;
+    }
+
+    .feature-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    }
+
+    .feature-card h3 {
+      margin: 0 0 10px;
+      font-size: 19px;
+      line-height: 1.3;
+      color: var(--text);
+    }
+
+    .feature-card p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .footer-note {
+      margin-top: 26px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--muted);
+      max-width: 720px;
+    }
+
+    @media (max-width: 900px) {
+      h1 {
+        font-size: 46px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .top-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <script>
+    const isPopup = new URLSearchParams(window.location.search).get("popup") === "1";
 
-<script>
-const isPopup = new URLSearchParams(window.location.search).get("popup") === "1";
+    function goHome() {
+      window.location.href = "https://daytrademindai.com";
+    }
 
-function goHome() {
-  window.location.href = "https://daytrademindai.com";
-}
+    function openPopup() {
+      const popupUrl = window.location.origin + window.location.pathname + "?popup=1";
+      const win = window.open(
+        popupUrl,
+        "DayTradeMindAIChat",
+        "width=1180,height=820,left=120,top=60,resizable=yes,scrollbars=yes"
+      );
 
-function openPopup() {
-  const url = window.location.origin + window.location.pathname + "?popup=1";
+      if (!win) {
+        document.body.innerHTML = '<div class="launch-status">Popup blocked. Please allow popups for this site.</div>';
+        return;
+      }
 
-  window.open(
-    url,
-    "ChatWindow",
-    "width=1100,height=750,left=150,top=60,resizable=yes"
-  );
+      win.focus();
+      document.body.innerHTML = '<div class="launch-status">Chat window opened. You can close this tab.</div>';
+    }
 
-  document.body.innerHTML = "Chat launched.";
-}
+    function buildPopupPage() {
+      document.body.className = "popup";
+      document.body.innerHTML = `
+        <div class="page-shell">
+          <div class="content-wrap">
+            <div class="top-row">
+              <div class="brand">DayTradeMindAI</div>
+              <button class="return-btn" onclick="goHome()">Return to Site</button>
+            </div>
 
-/* ===== POPUP PAGE ===== */
-if (isPopup) {
-  document.body.className = "popup";
+            <h1>What the Platform Does</h1>
+            <p class="subtitle">
+              A full suite of AI, ML, and trading tools — built for serious day traders.
+            </p>
 
-  document.body.innerHTML = `
-    <div class="info">
-      <button class="return-btn" onclick="goHome()">Return to Site</button>
+            <div class="highlight">
+              Chat with our virtual assistant for help understanding product features,
+              platform workflows, trading tools, scan logic, and anything else you need
+              while exploring the system.
+            </div>
 
-      <h1>What the Platform Does</h1>
-      <p>A full suite of AI, ML, and trading tools — built for serious day traders.</p>
+            <h2>Core Functionality</h2>
 
-      <div class="highlight">
-        Chat with our virtual assistant for help with features, workflows, and trading tools.
-      </div>
+            <div class="feature-grid">
+              <div class="feature-card">
+                <h3>Premarket Scan</h3>
+                <p>Identifies early-morning stocks showing breakout potential before the market opens.</p>
+              </div>
 
-      <h2>Core Functionality</h2>
-      <p><b>Premarket Scan</b> — early breakout detection</p>
-      <p><b>Market Scan</b> — real-time stock scanning</p>
-      <p><b>AI Analysis</b> — insights & reasoning</p>
-      <p><b>ML Prediction</b> — breakout confidence</p>
-      <p><b>Profit Plan</b> — structured trades</p>
-      <p><b>Risk Allocation</b> — balanced selection</p>
-    </div>
+              <div class="feature-card">
+                <h3>Market Scan</h3>
+                <p>Scans the live market for active stocks using price action, volume, technical signals, and breakout analysis.</p>
+              </div>
 
-    <div class="chat-wrap">
-      <div class="chat-box">
-        <div class="header">
-          <span>Virtual Assistant</span>
+              <div class="feature-card">
+                <h3>AI-Powered Analysis</h3>
+                <p>Generates stock insights, summaries, and trade-support reasoning from market data and technical conditions.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>ML Breakout Prediction</h3>
+                <p>Uses ML models to estimate breakout probability and confidence for each stock.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Smart Profit Plan</h3>
+                <p>Builds structured trade plans from selected opportunities based on scoring, ranking, and allocation logic.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Risk Allocation</h3>
+                <p>Classifies candidates by risk tier and supports more balanced trade selection.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Custom ML Optimization</h3>
+                <p>Lets users adjust thresholds, ranking weights, and selection settings to match their own strategy.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Model Training Support</h3>
+                <p>Captures scan and outcome data that can be used to improve and retrain models over time.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Technical & Sentiment Scoring</h3>
+                <p>Combines momentum, volume, technical indicators, and sentiment into practical decision support.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Chart Analysis</h3>
+                <p>Displays short-term and longer-term charts to help users visually confirm setups and trends.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Active Trade Tracking</h3>
+                <p>Helps monitor open trades and review progress after entry.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Historical Logging & Review</h3>
+                <p>Stores scan activity and trade-related records for analysis, learning, and model improvement.</p>
+              </div>
+
+              <div class="feature-card">
+                <h3>Personalized Settings</h3>
+                <p>Supports user-specific preferences for ranking controls, pool-entry rules, and workflow configuration.</p>
+              </div>
+            </div>
+
+            <div class="footer-note">
+              The assistant can answer questions about platform features, workflows, scan logic,
+              trade tools, and general product help.
+            </div>
+          </div>
         </div>
-        <div class="chat-area"></div>
-      </div>
-    </div>
-  `;
+      `;
 
-  const script = document.createElement("script");
-  script.src = "https://dashboard.retellai.com/retell-widget.js";
-  script.type = "module";
-  script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
-  script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
-  script.setAttribute("data-auto-open", "true");
+      const script = document.createElement("script");
+      script.src = "https://dashboard.retellai.com/retell-widget.js";
+      script.type = "module";
+      script.id = "retell-widget";
+      script.setAttribute("data-public-key", "public_key_0b74d32971e4364d15024");
+      script.setAttribute("data-agent-id", "agent_a22e71c2e4717d7c80a03616c5");
+      script.setAttribute("data-auto-open", "true");
+      script.setAttribute("data-title", "Virtual Assistant");
+      document.head.appendChild(script);
+    }
 
-  document.head.appendChild(script);
-}
-
-/* ===== LAUNCH PAGE ===== */
-else {
-  document.body.innerHTML = "Launching chat...";
-  setTimeout(openPopup, 300);
-}
-</script>
-
+    if (!isPopup) {
+      document.body.className = "launcher";
+      document.body.innerHTML = '<div class="launch-status">Launching chat window...</div>';
+      setTimeout(openPopup, 400);
+    } else {
+      buildPopupPage();
+    }
+  </script>
 </body>
 </html>
